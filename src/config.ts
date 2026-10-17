@@ -5,12 +5,12 @@ export const CMS_CONFIG = {
   OAUTH_PROXY_URL: import.meta.env.VITE_OAUTH_PROXY_URL || 'http://localhost:8787',
 
   // 内容仓库
-  CONTENT_OWNER: 'kobaridev',
+  CONTENT_OWNER: 'kunworking',
   CONTENT_REPO: 'RyuChan-Content',
   CONTENT_BRANCH: 'main',
 
   // 允许的 GitHub 用户（owner）
-  ALLOWED_USER: 'kobaridev',
+  ALLOWED_USER: 'kunworking',
 } as const
 
 // 内容仓库根路径
