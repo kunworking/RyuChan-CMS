@@ -44,7 +44,7 @@ export default {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json', 'User-Agent': 'RyuChan-CMS',
           },
           body: JSON.stringify({
             client_id: env.GITHUB_CLIENT_ID,
