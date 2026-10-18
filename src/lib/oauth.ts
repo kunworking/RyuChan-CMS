@@ -1,4 +1,4 @@
-// OAuth PKCE 流程辅助
+// OAuth flow helper
 import { CMS_CONFIG } from '@/config'
 
 // 生成随机字符串
@@ -8,43 +8,21 @@ function generateRandomString(length: number): string {
   return Array.from(array, (byte) => ('0' + byte.toString(16)).slice(-2)).join('')
 }
 
-// Base64 URL 编码
-function base64UrlEncode(buffer: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '')
-}
-
-// 生成 PKCE code verifier 和 challenge
-async function generatePKCE(): Promise<{ codeVerifier: string; codeChallenge: string }> {
-  const codeVerifier = generateRandomString(64)
-  const encoder = new TextEncoder()
-  const data = encoder.encode(codeVerifier)
-  const digest = await crypto.subtle.digest('SHA-256', data)
-  const codeChallenge = base64UrlEncode(digest)
-  return { codeVerifier, codeChallenge }
-}
-
 // 跳转到 GitHub OAuth 授权页
 export async function redirectToGitHubOAuth(): Promise<void> {
-  const { codeVerifier, codeChallenge } = await generatePKCE()
   const state = generateRandomString(16)
 
-  // 存储 code_verifier 和 state 用于回调验证
-  sessionStorage.setItem('oauth_code_verifier', codeVerifier)
+  // 存储 state 用于回调验证
   sessionStorage.setItem('oauth_state', state)
 
   const params = new URLSearchParams({
     client_id: CMS_CONFIG.GITHUB_CLIENT_ID,
-    redirect_uri: `${CMS_CONFIG.OAUTH_PROXY_URL}/callback`,
+    redirect_uri: CMS_CONFIG.OAUTH_PROXY_URL + '/callback',
     scope: 'repo',
     state,
-    code_challenge: codeChallenge,
-    code_challenge_method: 'S256',
   })
 
-  window.location.href = `https://github.com/login/oauth/authorize?${params.toString()}`
+  window.location.href = 'https://github.com/login/oauth/authorize?' + params.toString()
 }
 
 // 解析 OAuth 回调的 hash
@@ -80,6 +58,5 @@ export function storeToken(token: string): void {
 // 清除 token
 export function clearToken(): void {
   sessionStorage.removeItem('github_token')
-  sessionStorage.removeItem('oauth_code_verifier')
   sessionStorage.removeItem('oauth_state')
 }
