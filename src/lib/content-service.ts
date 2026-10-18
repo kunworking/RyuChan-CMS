@@ -197,6 +197,18 @@ async function prepareTreeItemsForChange(
     return [{ path: args[0] as string, mode: '100644', type: 'blob', sha: null }]
   }
 
+    // ========== 模块标题批量保存 ==========
+  if (serviceFunc === 'saveModuleTitle') {
+    const [filePath, title, subtitle] = args as [string, string, string]
+    const existing = await readTextFileFromRepo(token, CONTENT_OWNER, CONTENT_REPO, filePath, CMS_CONFIG.CONTENT_BRANCH)
+    const data = existing ? parseYaml<Record<string, unknown>>(existing) : {}
+    data.title = title
+    data.subtitle = subtitle
+    const content = yaml.dump(data, { lineWidth: -1 })
+    const blob = await createBlob(token, CONTENT_OWNER, CONTENT_REPO, toBase64Utf8(content), 'base64')
+    return [{ path: filePath, mode: '100644', type: 'blob', sha: blob.sha }]
+  }
+
   // ========== 通用 YAML 保存 ==========
   if (serviceFunc === 'saveYamlFile') {
     const [filePath, data] = args as [string, unknown]
