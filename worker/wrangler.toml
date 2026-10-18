@@ -13,6 +13,8 @@ compatibility_date = "2024-01-01"
 
 [vars]
 ALLOWED_USER = "kunworking"
+CMS_ORIGIN = "https://ryuchan-cms.pages.dev"
+REDIRECT_URI = "https://ryuchan-cms.kunxknow.workers.dev/callback"
 # 以下变量通过 npx wrangler secret put 设置（在 worker 目录下执行）：
 # GITHUB_CLIENT_ID     - GitHub OAuth App 的 Client ID
 # GITHUB_CLIENT_SECRET - GitHub OAuth App 的 Client Secret
